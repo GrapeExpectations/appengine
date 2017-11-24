@@ -7,12 +7,11 @@ import (
 	"net/http"
 )
 
-func NamespacedRequest(ns func(*http.Request) (string, error), fn func(context.Context, http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+func (h *Handler) NamespacedRequest(ns func(*http.Request) (string, error)) *Handler {
 
-	return func(w http.ResponseWriter, r *http.Request) {
-		ctx := appengine.NewContext(r)
-
-		namespace, err := ns(r)
+  fn := h.handler
+  h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    namespace, err := ns(r)
 		if err != nil {
 			log.Errorf(ctx, "error getting namespace: %v", err)
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -27,6 +26,8 @@ func NamespacedRequest(ns func(*http.Request) (string, error), fn func(context.C
 		}
 
 		fn(ctx, w, r)
-	}
+  }
+
+  return h
 
 }

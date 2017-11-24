@@ -28,12 +28,18 @@ func TestNamespacedRequest(t *testing.T) {
 		fmt.Fprintf(w, n)
 	}
 
-	handleGood := NamespacedRequest(func(r *http.Request) (string, error) {
-		return namespace, nil
-	}, handler)
-	handleError := NamespacedRequest(func(r *http.Request) (string, error) {
-		return "", errors.New("no namespace")
-	}, handler)
+	goodHandler := NewHandler("/", handler).
+		NamespacedRequest(func(r *http.Request) (string, error) {
+			return namespace, nil
+		})
+
+	errorHandler := NewHandler("/", handler).
+		NamespacedRequest(func(r *http.Request) (string, error) {
+			return "", errors.New("no namespace")
+		})
+
+	_, handleGood := goodHandler.Route()
+	_, handleError := errorHandler.Route()
 
 	// TEST 1: no namespace
 	req1, err := inst.NewRequest("GET", "/", nil)
