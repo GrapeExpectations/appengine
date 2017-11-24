@@ -24,20 +24,3 @@ func (h *Handler) Route() (string, func(http.ResponseWriter, *http.Request)) {
     h.handler(ctx, w, r)
   }
 }
-
-// func ServiceRequestHandler(fn func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
-//   return func(w http.ResponseWriter, r *http.Request) {
-//     ctx := appengine.NewContext(r)
-//     dev := appengine.IsDevAppServer()
-//
-//     requestingAppId := r.Header.Get("X-Appengine-Inbound-Appid")
-//     appId := appengine.AppID(ctx)
-//
-//     if !dev && requestingAppId != appId {
-//       http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-// 			return
-//     }
-//
-//     fn(w, r)
-//   }
-// }
