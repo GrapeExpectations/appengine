@@ -1,4 +1,4 @@
-# Request Library
+# Handler Library
 
 ## Handler
 
@@ -9,17 +9,20 @@ package api
 
 import (
   "context"
-  "appengine/request"
+  "appengine/handler"
   "github.com/gorilla/mux"
   "lib/ns"
 )
 
 func init() {
-	list := request.NewHandler("/", listHandler).
-      NamespacedRequest(ns.GetNamespaceFromHost)
+	list := handler.NewHandler("/", listHandler).
+      NamespacedRequest(ns.GetNamespaceFromHost).
+      ContentType("application/json").
+      CORS()
 
-	write := request.NewHandler("/write", writeHandler).
+	write := handler.NewHandler("/write", writeHandler).
       NamespacedRequest(ns.GetNamespaceFromHeader).
+      ContentType("application/json").
       ServiceRequest()
 
 	r := mux.NewRouter()
@@ -36,6 +39,29 @@ func writeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
   // ... write a thing
 }
 ```
+
+### Content Type
+
+The `ContentType()` wrapper takes in a string, specifying the content type that the handler returns.  It sets the `Content-type` header in the response.
+
+```go
+list := request.NewHandler("/", listHandler).
+    ContentType("application/json")
+```
+In the above example, the handler's `content-type` response header is set to `application/json`.
+
+### CORS
+
+The `CORS()` wrapper sets the `Access-Control-Allow-Headers`,
+`Access-Control-Allow-Credentials`, `Access-Control-Allow-Origin`, and `Access-Control-Allow-Method` headers in the response.  These are currently not configurable, but will be in the future.
+
+Additionally, when an `OPTIONS` request is received, the wrapper will respond without continuing down the chain.
+
+```go
+list := request.NewHandler("/", listHandler).
+    CORS()
+```
+When an `OPTIONS` request is received in the above example, the response is returned (with cors headers) before the `listhandler` handler is called.
 
 ### Namespaced Request
 
@@ -60,3 +86,26 @@ write := request.NewHandler("/write", writeHandler).
     ServiceRequest()
 ```
 In the above example, the `/write` route can only be called by a service which has the same AppId
+
+### Wrap
+
+The `Wrap()` wrapper takes in a function,
+```go
+func(context.Context, http.ResponseWriter, *http.Request,
+	func(context.Context, http.ResponseWriter, *http.Request))
+```
+which accepts a Context, ResponseWriter, and Request, as well as a function(taking those same parameters).  This allows you to provide a generic wrapper to modify the context, request, and/or response as you need.  It is your function's responsibility to call the next function in the chain (the provided function), as appropriate.
+
+```go
+wrapper := func(ctx context.Context, w http.ResponseWriter, r *http.Request, fn func(context.Context, http.ResponseWriter, *http.Request)) {
+  w.Header().Set("Content-type", "application/json")
+  fn(ctx, w, r)
+}
+
+list := request.NewHandler("/", listHandler).
+    Wrap(wrapper)
+
+```
+In the above example, the handler's `content-type` response header is set to `application/json`, by the `wrapper` function.
+
+*Note: This is only an example wrapper.  The same functionality can be achieved using the ContentType() wrapper instead
