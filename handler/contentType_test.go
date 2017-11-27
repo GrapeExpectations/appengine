@@ -39,9 +39,14 @@ func TestContentType(t *testing.T) {
 	handleGood(w, req)
 
 	resp := w.Result()
+	cType := resp.Header.Get("Content-Type")
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("bad status code, got: %d, want: %d", resp.StatusCode, http.StatusOK)
+	}
+
+	if cType != contentType {
+		t.Errorf("bad content type, got: %s, want: %s", cType, contentType)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
