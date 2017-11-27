@@ -35,7 +35,7 @@ if err != nil {
 
 ### Delete, Get, Post, Put... Request
 
-`Delete()`, `Get()`, `Post()`, and `Put()` are all convenience methods that call [`Request()`](###Request).  Each function takes in only a [`Request`](##Request) pointer, calling `Request()` with the appropriate method.
+`Delete()`, `Get()`, `Post()`, and `Put()` are all convenience methods that call [`Request()`](#request).  Each function takes in only a [`Request`](#request-1) pointer, calling `Request()` with the appropriate method.
 
 ```go
 req := service.NewRequest("/list")
@@ -47,7 +47,7 @@ if err != nil {
 
 ### Request
 
-The `Request()` function takes in a method name (`DELETE, GET, POST, PUT`), and a [`Request`](##Request) pointer.  It makes a "`method`" request to the configured service endpoint, using the `Request` pointer's `path`, applying the pointer's `Header`s, and sending the pointer's `body`.
+The `Request()` function takes in a method name (`DELETE, GET, POST, PUT`), and a [`Request`](#request-1) pointer.  It makes a "`method`" request to the configured service endpoint, using the `Request` pointer's `path`, applying the pointer's `Header`s, and sending the pointer's `body`.
 
 ```go
 req := service.NewRequest("/user")
