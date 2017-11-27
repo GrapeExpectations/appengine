@@ -43,8 +43,8 @@ func TestServiceRequest(t *testing.T) {
 
 	resp1 := w1.Result()
 
-	if resp1.StatusCode != 403 {
-		t.Errorf("bad status code, got: %d, want: 403", resp1.StatusCode)
+	if resp1.StatusCode != http.StatusForbidden {
+		t.Errorf("bad status code, got: %d, want: %d", resp1.StatusCode, http.StatusForbidden)
 	}
 
 	// TEST 2: happy path
@@ -60,8 +60,8 @@ func TestServiceRequest(t *testing.T) {
 
 	resp2 := w2.Result()
 
-	if resp2.StatusCode != 200 {
-		t.Errorf("bad status code, got: %d, want: 200", resp2.StatusCode)
+	if resp2.StatusCode != http.StatusOK {
+		t.Errorf("bad status code, got: %d, want: %d", resp2.StatusCode, http.StatusOK)
 	}
 
 	body, err := ioutil.ReadAll(resp2.Body)

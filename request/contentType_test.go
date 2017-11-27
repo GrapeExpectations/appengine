@@ -10,9 +10,9 @@ import (
 	"testing"
 )
 
-func TestWrap(t *testing.T) {
+func TestContentType(t *testing.T) {
+	const contentType = "application/json"
 	const responseBody = "ok"
-	const contentType = "application/json; charset=utf-8"
 
 	// setup instance
 	inst, err := aetest.NewInstance(nil)
@@ -26,36 +26,27 @@ func TestWrap(t *testing.T) {
 		fmt.Fprintf(w, responseBody)
 	}
 
-	wrapper := func(ctx context.Context, w http.ResponseWriter, r *http.Request, fn func(context.Context, http.ResponseWriter, *http.Request)) {
-		w.Header().Set("Content-type", contentType)
-		fn(ctx, w, r)
-	}
+	goodHandler := NewHandler("/", handler).ContentType(contentType)
 
-	wrappedHandler := NewHandler("/", handler).Wrap(wrapper)
+	_, handleGood := goodHandler.Route()
 
-	_, handleWrap := wrappedHandler.Route()
-
-	// TEST 1: no namespace
 	req, err := inst.NewRequest("GET", "/", nil)
 	if err != nil {
 		t.Fatalf("Failed to create req: %v", err)
 	}
 
 	w := httptest.NewRecorder()
-	handleWrap(w, req)
+	handleGood(w, req)
 
 	resp := w.Result()
-	respContentType := resp.Header.Get("Content-Type")
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		t.Fatal("Failed to read response body")
-	}
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("bad status code, got: %d, want: %d", resp.StatusCode, http.StatusOK)
 	}
-	if respContentType != contentType {
-		t.Errorf("bad content type, got: %v, want: %v", respContentType, contentType)
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatal("Failed to read response body")
 	}
 	if string(body) != responseBody {
 		t.Errorf("incorrect response body, got: %v, want: %v", string(body), responseBody)

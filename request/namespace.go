@@ -24,14 +24,14 @@ func (h *Handler) NamespacedRequest(ns func(*http.Request) (string, error)) *Han
 			return
 		}
 
-		ctx, err = appengine.Namespace(ctx, namespace)
+		namespacedCtx, err := appengine.Namespace(ctx, namespace)
 		if err != nil {
 			log.Errorf(ctx, "error using namespace: %v", err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
 
-		fn(ctx, w, r)
+		fn(namespacedCtx, w, r)
   }
 
   return h

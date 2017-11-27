@@ -4,16 +4,36 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"google.golang.org/appengine"
 	"google.golang.org/appengine/aetest"
-	"google.golang.org/appengine/datastore"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
+func TestNamespaceFromContext(t *testing.T) {
+	const namespace = "local"
+	ctx, done, err := aetest.NewContext()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer done()
+
+	ctx, err = appengine.Namespace(ctx, namespace)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ns := NamespaceFromContext(ctx)
+	if ns != namespace {
+		t.Errorf("bad namespace, got: %s, want: %s", ns, namespace)
+	}
+}
+
 func TestNamespacedRequest(t *testing.T) {
 	const namespace = "local"
+	const invalidNamespace = "not a valid namespace!*"
 
 	// setup instance
 	inst, err := aetest.NewInstance(nil)
@@ -24,7 +44,7 @@ func TestNamespacedRequest(t *testing.T) {
 
 	// setup handler
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-		n := datastore.NewKey(ctx, "E", "e", 0, nil).Namespace()
+		n := NamespaceFromContext(ctx)
 		fmt.Fprintf(w, n)
 	}
 
@@ -38,8 +58,14 @@ func TestNamespacedRequest(t *testing.T) {
 			return "", errors.New("no namespace")
 		})
 
+	invalidHandler := NewHandler("/", handler).
+		NamespacedRequest(func(r *http.Request) (string, error) {
+			return invalidNamespace, nil
+		})
+
 	_, handleGood := goodHandler.Route()
 	_, handleError := errorHandler.Route()
+	_, handleInvalid := invalidHandler.Route()
 
 	// TEST 1: no namespace
 	req1, err := inst.NewRequest("GET", "/", nil)
@@ -52,8 +78,8 @@ func TestNamespacedRequest(t *testing.T) {
 
 	resp1 := w1.Result()
 
-	if resp1.StatusCode != 400 {
-		t.Errorf("bad status code, got: %d, want: 400", resp1.StatusCode)
+	if resp1.StatusCode != http.StatusBadRequest {
+		t.Errorf("bad status code, got: %d, want: %d", resp1.StatusCode, http.StatusBadRequest)
 	}
 
 	// TEST 2: happy path
@@ -67,8 +93,8 @@ func TestNamespacedRequest(t *testing.T) {
 
 	resp2 := w2.Result()
 
-	if resp2.StatusCode != 200 {
-		t.Errorf("bad status code, got: %d, want: 200", resp2.StatusCode)
+	if resp2.StatusCode != http.StatusOK {
+		t.Errorf("bad status code, got: %d, want: %d", resp2.StatusCode, http.StatusOK)
 	}
 
 	body, err := ioutil.ReadAll(resp2.Body)
@@ -77,5 +103,20 @@ func TestNamespacedRequest(t *testing.T) {
 	}
 	if string(body) != namespace {
 		t.Errorf("incorrect namespace, got: %v, want: %v", string(body), namespace)
+	}
+
+	// TEST 3: invalid namespace name
+	req3, err := inst.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatalf("Failed to create req: %v", err)
+	}
+
+	w3 := httptest.NewRecorder()
+	handleInvalid(w3, req3)
+
+	resp3 := w3.Result()
+
+	if resp3.StatusCode != http.StatusInternalServerError {
+		t.Errorf("bad status code, got: %d, want: %d", resp3.StatusCode, http.StatusInternalServerError)
 	}
 }

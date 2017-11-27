@@ -41,8 +41,8 @@ func TestHandler(t *testing.T) {
 
 	resp := w.Result()
 
-	if resp.StatusCode != 200 {
-		t.Errorf("bad status code, got: %d, want: 200", resp.StatusCode)
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("bad status code, got: %d, want: %d", resp.StatusCode, http.StatusOK)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
