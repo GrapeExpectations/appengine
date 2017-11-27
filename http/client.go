@@ -26,9 +26,25 @@ func NewServiceClient(ctx context.Context, service string) (*ServiceClient, erro
   return &ServiceClient {client, m}, nil
 }
 
+func (c *ServiceClient) Delete(r *Request) (*http.Response, error) {
+  return c.Write("DELETE", r)
+}
+
 func (c *ServiceClient) Get(r *Request) (*http.Response, error) {
+  return c.Write("GET", r)
+}
+
+func (c *ServiceClient) Post(r *Request) (*http.Response, error) {
+  return c.Write("POST", r)
+}
+
+func (c *ServiceClient) Put(r *Request) (*http.Response, error) {
+  return c.Write("POST", r)
+}
+
+func (c *ServiceClient) Write(method string, r *Request) (*http.Response, error) {
   url := fmt.Sprintf("%s%s%s", protocol(), c.module, r.path)
-  req, err := http.NewRequest("GET", url, nil)
+  req, err := http.NewRequest(method, url, r.body)
 	if err != nil {
     return nil, err
 	}
