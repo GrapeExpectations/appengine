@@ -22,6 +22,11 @@ func (r *Request) With(fn func(*Request) *Request) *Request {
   return fn(r)
 }
 
+func (r *Request) WithBody(body io.Reader) *Request {
+  r.body = body
+  return r
+}
+
 func (r *Request) WithHeader(key, value string) *Request {
   r.Header.Add(key, value)
   return r
