@@ -27,22 +27,22 @@ func NewServiceClient(ctx context.Context, service string) (*ServiceClient, erro
 }
 
 func (c *ServiceClient) Delete(r *Request) (*http.Response, error) {
-  return c.Write("DELETE", r)
+  return c.Request("DELETE", r)
 }
 
 func (c *ServiceClient) Get(r *Request) (*http.Response, error) {
-  return c.Write("GET", r)
+  return c.Request("GET", r)
 }
 
 func (c *ServiceClient) Post(r *Request) (*http.Response, error) {
-  return c.Write("POST", r)
+  return c.Request("POST", r)
 }
 
 func (c *ServiceClient) Put(r *Request) (*http.Response, error) {
-  return c.Write("POST", r)
+  return c.Request("POST", r)
 }
 
-func (c *ServiceClient) Write(method string, r *Request) (*http.Response, error) {
+func (c *ServiceClient) Request(method string, r *Request) (*http.Response, error) {
   url := fmt.Sprintf("%s%s%s", protocol(), c.module, r.path)
   req, err := http.NewRequest(method, url, r.body)
 	if err != nil {
