@@ -15,20 +15,20 @@ import (
 )
 
 func init() {
-	list := handler.NewHandler("/", listHandler).
-      NamespacedRequest(ns.GetNamespaceFromHost).
-      ContentType("application/json").
-      CORS()
+  list := handler.NewHandler("/", listHandler).
+    NamespacedRequest(ns.GetNamespaceFromHost).
+    ContentType("application/json").
+    CORS()
 
-	write := handler.NewHandler("/write", writeHandler).
-      NamespacedRequest(ns.GetNamespaceFromHeader).
-      ContentType("application/json").
-      ServiceRequest()
+  write := handler.NewHandler("/write", writeHandler).
+    NamespacedRequest(ns.GetNamespaceFromHeader).
+    ContentType("application/json").
+    ServiceRequest()
 
-	r := mux.NewRouter()
-	r.HandleFunc(list.Route()).Methods("GET")
-	r.HandleFunc(write.Route()).Methods("POST")
-	http.Handle("/", r)
+  r := mux.NewRouter()
+  r.HandleFunc(list.Route()).Methods("GET")
+  r.HandleFunc(write.Route()).Methods("POST")
+  http.Handle("/", r)
 }
 
 func listHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
@@ -46,7 +46,7 @@ The `ContentType()` wrapper takes in a string, specifying the content type that 
 
 ```go
 list := request.NewHandler("/", listHandler).
-    ContentType("application/json")
+  ContentType("application/json")
 ```
 In the above example, the handler's `content-type` response header is set to `application/json`.
 
@@ -59,7 +59,7 @@ Additionally, when an `OPTIONS` request is received, the wrapper will respond wi
 
 ```go
 list := request.NewHandler("/", listHandler).
-    CORS()
+  CORS()
 ```
 When an `OPTIONS` request is received in the above example, the response is returned (with cors headers) before the `listhandler` handler is called.
 
@@ -67,13 +67,13 @@ When an `OPTIONS` request is received in the above example, the response is retu
 
 The `NamespacedRequest()` wrapper takes in a function,
 ```go
-func(*http.Request) (string, error)
+  func(*http.Request) (string, error)
 ```
 which accepts an `*http.Request` parameter, and returns a string and error.  That function will be called by the wrapping function to determine the namespace to use (returned by the string).  If an error is returned, the wrapping function logs the error, and returns `http.StatusBadRequest`.  The wrapping function applies this namespace to the context, and then calls the inner function.  If the wrapping function encounters an error while applying the namespace (for example, if the namespace string returned is not a legal namespace name), the wrapping function returns `http.StatusInternalServerError`.
 
 ```go
 list := request.NewHandler("/", listHandler).
-    NamespacedRequest(ns.GetNamespaceFromHost)
+  NamespacedRequest(ns.GetNamespaceFromHost)
 ```
 In the above example, `ns.GetNamespaceFromHost` is a function which takes `*http.Request` as a parameter, and returns `(string, error)`.
 
@@ -83,7 +83,7 @@ The `ServiceRequest()` wrapper takes no parameters.  It checks that either `appe
 
 ```go
 write := request.NewHandler("/write", writeHandler).
-    ServiceRequest()
+  ServiceRequest()
 ```
 In the above example, the `/write` route can only be called by a service which has the same AppId
 
@@ -103,7 +103,7 @@ wrapper := func(ctx context.Context, w http.ResponseWriter, r *http.Request, fn 
 }
 
 list := request.NewHandler("/", listHandler).
-    Wrap(wrapper)
+  Wrap(wrapper)
 
 ```
 In the above example, the handler's `content-type` response header is set to `application/json`, by the `wrapper` function.

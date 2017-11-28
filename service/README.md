@@ -14,9 +14,9 @@ import (
 func memberList(ctx context.Context) error {
   // ... call the member service to list the members
   client, err := service.NewServiceClient(ctx, "member")
-	if err != nil {
-		return err
-	}
+  if err != nil {
+    return err
+  }
 
   // ...
 }
@@ -75,21 +75,21 @@ func memberWrite(ctx context.Context, encodedMember string) error {
 
   // ... configure request
   req := service.NewRequest("/write").
-		With(ns.AddNamespace(ctx)).
+    With(ns.AddNamespace(ctx)).
     WithBody(reader).
     WithHeader("X-Tracking-Id", trackingGUID)
 
   // ... configure a client for the "member" service
   client, err := service.NewServiceClient(ctx, "member")
-	if err != nil {
-		return err
-	}
+  if err != nil {
+    return err
+  }
 
   // ... call the member service to write the member
   resp, err := client.Post(req)
   if err != nil {
-		return err
-	}
+    return err
+  }
 }
 ```
 
@@ -125,7 +125,7 @@ func memberWrite(ctx context.Context, encodedMember string) error {
 `With()` provides a generic way to modify the `Request`, by taking a function,
 
 ```go
-  fn func(*Request) *Request
+  func(*Request) *Request
 ```
 
 which accepts and returns a `Request` pointer.
@@ -140,7 +140,7 @@ func SendUser(user *SystemUser) func(*Request) *Request {
 
 func memberWrite(ctx context.Context, user *SystemUser) error {
   req := service.NewRequest("/list").
-		With(SendUser(user))
+    With(SendUser(user))
 
   // ...
 }
@@ -150,7 +150,7 @@ In the above example, the `SendUser` function is used to encode a system user, a
 ```go
 func memberWrite(ctx context.Context, user *SystemUser) error {
   req := service.NewRequest("/list").
-		WithHeader("X-System-User", user.Encode())
+    WithHeader("X-System-User", user.Encode())
 
   // ...
 }
