@@ -1,16 +1,16 @@
 package datastore
 
 import (
+	"appengine/helper"
 	"context"
 	"errors"
-	"github.com/GrapeExpectations/appengine/handler"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"reflect"
 )
 
 func Write(ctx context.Context, e Entity) error {
-	ns := handler.NamespaceFromContext(ctx)
+	ns := helper.NamespaceFromContext(ctx)
 	entityType := reflect.TypeOf(e).Elem().Name()
 
 	key := e.GetKey()

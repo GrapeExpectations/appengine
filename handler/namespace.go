@@ -3,15 +3,9 @@ package handler
 import (
 	"context"
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"net/http"
 )
-
-func NamespaceFromContext(ctx context.Context) string {
-	n := datastore.NewKey(ctx, "E", "e", 0, nil).Namespace()
-	return n
-}
 
 func (h *Handler) NamespacedRequest(ns func(*http.Request) (string, error)) *Handler {
 
