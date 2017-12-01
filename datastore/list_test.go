@@ -37,20 +37,16 @@ func TestList_Success(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	e := TestEntity{
+	es := make([]Entity, 2)
+	es[0] = &TestEntity{
 		Name: "Jason",
 	}
 
-	f := TestEntity{
+	es[1] = &TestEntity{
 		Name: "Kenny",
 	}
 
-	err = Put(ctx, &e)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = Put(ctx, &f)
+	err = PutMulti(ctx, es)
 	if err != nil {
 		t.Fatal(err)
 	}
