@@ -11,7 +11,7 @@ import (
 func List(ctx context.Context, q *datastore.Query, entities interface{}) error {
 	keys, err := q.GetAll(ctx, entities)
 	if err != nil {
-		log.Errorf(ctx, "error in List: %v", err)
+		log.Debugf(ctx, "error in List: %v", err)
 		return err
 	}
 

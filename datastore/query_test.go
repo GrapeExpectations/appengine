@@ -46,12 +46,12 @@ func TestQuery_Success(t *testing.T) {
 		Name: "Kenny",
 	}
 
-	err = Write(ctx, &e)
+	err = Put(ctx, &e)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = Write(ctx, &f)
+	err = Put(ctx, &f)
 	if err != nil {
 		t.Fatal(err)
 	}

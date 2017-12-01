@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestWrite_BadNamespace(t *testing.T) {
+func TestPut_BadNamespace(t *testing.T) {
 	const namespace = "local"
 	ctx, done, err := aetest.NewContext()
 	if err != nil {
@@ -31,13 +31,13 @@ func TestWrite_BadNamespace(t *testing.T) {
 	}
 	e.SetKey(key)
 
-	err = Write(ctx, &e)
+	err = Put(ctx, &e)
 	if err == nil {
 		t.Errorf("expected error, got none")
 	}
 }
 
-func TestWrite_WrongKind(t *testing.T) {
+func TestPut_WrongKind(t *testing.T) {
 	ctx, done, err := aetest.NewContext()
 	if err != nil {
 		t.Fatal(err)
@@ -50,13 +50,13 @@ func TestWrite_WrongKind(t *testing.T) {
 	}
 	e.SetKey(key)
 
-	err = Write(ctx, &e)
+	err = Put(ctx, &e)
 	if err == nil {
 		t.Errorf("expected error, got none")
 	}
 }
 
-func TestWrite_WrongParent(t *testing.T) {
+func TestPut_WrongParent(t *testing.T) {
 	ctx, done, err := aetest.NewContext()
 	if err != nil {
 		t.Fatal(err)
@@ -72,13 +72,13 @@ func TestWrite_WrongParent(t *testing.T) {
 	e.SetKey(key)
 	e.SetParentKey(parentKey)
 
-	err = Write(ctx, &e)
+	err = Put(ctx, &e)
 	if err == nil {
 		t.Errorf("expected error, got none")
 	}
 }
 
-func TestWrite_Success(t *testing.T) {
+func TestPut_Success(t *testing.T) {
 	const namespace = "local"
 	ctx, done, err := aetest.NewContext()
 	if err != nil {
@@ -97,7 +97,7 @@ func TestWrite_Success(t *testing.T) {
 	}
 	e.SetParentKey(parent)
 
-	err = Write(ctx, &e)
+	err = Put(ctx, &e)
 	if err != nil {
 		t.Errorf("err: [%v]", err)
 	}

@@ -23,7 +23,7 @@ func TestGet_Success(t *testing.T) {
 		Name: "test",
 	}
 
-	err = Write(ctx, &e)
+	err = Put(ctx, &e)
 	if err != nil {
 		t.Errorf("err: [%v]", err)
 	}

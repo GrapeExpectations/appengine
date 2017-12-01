@@ -9,7 +9,7 @@ import (
 	"reflect"
 )
 
-func Write(ctx context.Context, e Entity) error {
+func Put(ctx context.Context, e Entity) error {
 	ns := helper.NamespaceFromContext(ctx)
 	entityType := reflect.TypeOf(e).Elem().Name()
 
@@ -33,7 +33,7 @@ func Write(ctx context.Context, e Entity) error {
 
 	k, err := datastore.Put(ctx, key, e)
 	if err != nil {
-		log.Errorf(ctx, "could not write to datastore: %v", err)
+		log.Debugf(ctx, "could not write to datastore: %v", err)
 		return err
 	}
 	e.SetKey(k)

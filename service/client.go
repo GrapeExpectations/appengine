@@ -19,7 +19,7 @@ func NewServiceClient(ctx context.Context, service string) (*ServiceClient, erro
 
   m, err := appengine.ModuleHostname(ctx, service, "", "")
 	if err != nil {
-    log.Errorf(ctx, "error finding service [%v]: %v", service, err)
+    log.Debugf(ctx, "error finding service [%v]: %v", service, err)
     return nil, err
 	}
 
