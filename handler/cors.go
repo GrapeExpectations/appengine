@@ -1,14 +1,14 @@
 package handler
 
 import (
-  "context"
-  "net/http"
+	"context"
+	"net/http"
 )
 
 func (h *Handler) CORS() *Handler {
-  fn := h.handler
-  h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-    w.Header().Add("Access-Control-Allow-Headers", "Authorization,Content-Type")
+	fn := h.handler
+	h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Access-Control-Allow-Headers", "Authorization,Content-Type")
 		w.Header().Add("Access-Control-Allow-Credentials", "true")
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Methods", "OPTIONS,GET,PUT,POST,DELETE")
@@ -16,8 +16,8 @@ func (h *Handler) CORS() *Handler {
 			return
 		}
 
-    fn(ctx, w, r)
-  }
+		fn(ctx, w, r)
+	}
 
-  return h
+	return h
 }

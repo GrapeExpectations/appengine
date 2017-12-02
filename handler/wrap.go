@@ -9,10 +9,10 @@ func (h *Handler) Wrap(fn func(context.Context, http.ResponseWriter, *http.Reque
 	func(context.Context, http.ResponseWriter, *http.Request))) *Handler {
 
 	handlerFn := h.handler
-  h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		fn(ctx, w, r, handlerFn)
-  }
+	}
 
-  return h
+	return h
 
 }

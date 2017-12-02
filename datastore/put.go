@@ -1,9 +1,9 @@
 package datastore
 
 import (
-	"appengine/helper"
 	"context"
 	"errors"
+	"github.com/GrapeExpectations/appengine/helper"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"reflect"

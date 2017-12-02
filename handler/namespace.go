@@ -9,9 +9,9 @@ import (
 
 func (h *Handler) NamespacedRequest(ns func(*http.Request) (string, error)) *Handler {
 
-  fn := h.handler
-  h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-    namespace, err := ns(r)
+	fn := h.handler
+	h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+		namespace, err := ns(r)
 		if err != nil {
 			log.Debugf(ctx, "error getting namespace: %v", err)
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -26,8 +26,8 @@ func (h *Handler) NamespacedRequest(ns func(*http.Request) (string, error)) *Han
 		}
 
 		fn(namespacedCtx, w, r)
-  }
+	}
 
-  return h
+	return h
 
 }
