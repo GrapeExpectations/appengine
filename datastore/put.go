@@ -1,9 +1,9 @@
 package datastore
 
 import (
-	"appengine/helper"
 	"context"
 	"errors"
+	"github.com/GrapeExpectations/appengine/helper"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"reflect"
@@ -63,7 +63,7 @@ func validateKey(ctx context.Context, ns string, e Entity) (*datastore.Key, erro
 	if key.Kind() != entityType {
 		return nil, errors.New("key does not match kind")
 	}
-	if key.Parent() != parentKey {
+	if !key.Parent().Equal(parentKey) {
 		return nil, errors.New("parent does not match key")
 	}
 

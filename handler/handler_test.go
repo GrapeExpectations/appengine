@@ -1,37 +1,37 @@
 package handler
 
 import (
-  "context"
-  "fmt"
-  "google.golang.org/appengine/aetest"
-  "io/ioutil"
+	"context"
+	"fmt"
+	"google.golang.org/appengine/aetest"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-  "testing"
+	"testing"
 )
 
 func TestHandler(t *testing.T) {
-  // setup instance
+	// setup instance
 	inst, err := aetest.NewInstance(nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer inst.Close()
 
-  responseBody := "ok"
-  path := "/"
-  fn := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, responseBody)
-  }
+	responseBody := "ok"
+	path := "/"
+	fn := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, responseBody)
+	}
 
-  handler := NewHandler(path, fn)
+	handler := NewHandler(path, fn)
 
-  p, f := handler.Route()
-  if p != path {
-    t.Errorf("incorrect path, got: %v, want: %v", p, path)
-  }
+	p, f := handler.Route()
+	if p != path {
+		t.Errorf("incorrect path, got: %v, want: %v", p, path)
+	}
 
-  req, err := inst.NewRequest("GET", "/", nil)
+	req, err := inst.NewRequest("GET", "/", nil)
 	if err != nil {
 		t.Fatalf("Failed to create req: %v", err)
 	}
