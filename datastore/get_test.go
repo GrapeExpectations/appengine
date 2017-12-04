@@ -3,8 +3,41 @@ package datastore
 import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/aetest"
+	"google.golang.org/appengine/datastore"
 	"testing"
 )
+
+func TestGet_BadType(t *testing.T) {
+	ctx, done, err := aetest.NewContext()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer done()
+
+	type BadType struct {
+		Name string
+	}
+
+	var entity BadType
+	err = Get(ctx, nil, &entity)
+	if err == nil {
+		t.Errorf("expected error, got none")
+	}
+}
+
+func TestGet_NilKey(t *testing.T) {
+	ctx, done, err := aetest.NewContext()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer done()
+
+	var entity TestEntity
+	err = Get(ctx, nil, &entity)
+	if err == nil {
+		t.Errorf("expected error, got none")
+	}
+}
 
 func TestGet_Success(t *testing.T) {
 	const namespace = "local"
@@ -19,9 +52,11 @@ func TestGet_Success(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	parentKey := datastore.NewKey(ctx, TestEntityType, "ParentEntityID", 0, nil)
 	e := TestEntity{
 		Name: "test",
 	}
+	e.SetParentKey(parentKey)
 
 	err = Put(ctx, &e)
 	if err != nil {
@@ -32,5 +67,11 @@ func TestGet_Success(t *testing.T) {
 	err = Get(ctx, e.GetKey(), &entity)
 	if err != nil {
 		t.Errorf("error [%v]", err)
+	}
+	if entity.GetKey() == nil {
+		t.Errorf("entity key is nil")
+	}
+	if entity.GetParentKey() == nil {
+		t.Errorf("entity parent key is nil")
 	}
 }

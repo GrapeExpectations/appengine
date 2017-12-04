@@ -29,11 +29,13 @@ func Put(ctx context.Context, e Entity) error {
 func PutMulti(ctx context.Context, entities []Entity) error {
 	keys, err := validateKeys(ctx, entities)
 	if err != nil {
+		log.Debugf(ctx, "could not write to datastore: %v", err)
 		return err
 	}
 
 	ks, err := datastore.PutMulti(ctx, keys, entities)
 	if err != nil {
+		log.Debugf(ctx, "could not write to datastore: %v", err)
 		return err
 	}
 
