@@ -1,6 +1,7 @@
 package datastore
 
 import (
+	"appengine/errors"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/aetest"
 	"google.golang.org/appengine/datastore"
@@ -20,7 +21,7 @@ func TestGet_BadType(t *testing.T) {
 
 	var entity BadType
 	err = Get(ctx, nil, &entity)
-	if err == nil {
+	if _, ok := err.(*errors.ErrorStatus); !ok {
 		t.Errorf("expected error, got none")
 	}
 }
@@ -34,7 +35,7 @@ func TestGet_NilKey(t *testing.T) {
 
 	var entity TestEntity
 	err = Get(ctx, nil, &entity)
-	if err == nil {
+	if _, ok := err.(*errors.ErrorStatus); !ok {
 		t.Errorf("expected error, got none")
 	}
 }

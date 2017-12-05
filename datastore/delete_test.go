@@ -1,6 +1,7 @@
 package datastore
 
 import (
+	"appengine/errors"
 	"google.golang.org/appengine/aetest"
 	"google.golang.org/appengine/datastore"
 	"testing"
@@ -15,7 +16,7 @@ func TestDelete_WrongKind(t *testing.T) {
 
 	key := datastore.NewKey(ctx, "EntityType", "EntityID", 0, nil)
 	err = Delete(ctx, key, TestEntityType)
-	if err == nil {
+	if _, ok := err.(*errors.ErrorStatus); !ok {
 		t.Errorf("error expected, got none")
 	}
 }
@@ -28,7 +29,7 @@ func TestDelete_NilKey(t *testing.T) {
 	defer done()
 
 	err = Delete(ctx, nil, TestEntityType)
-	if err == nil {
+	if _, ok := err.(*errors.ErrorStatus); !ok {
 		t.Errorf("error expected, got none")
 	}
 }

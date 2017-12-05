@@ -1,6 +1,7 @@
 package datastore
 
 import (
+	"appengine/errors"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/aetest"
 	"google.golang.org/appengine/datastore"
@@ -20,7 +21,7 @@ func TestQuery_NotSlice(t *testing.T) {
 	q := datastore.NewQuery(TestEntityType)
 
 	_, err = Query(ctx, q, &entities, &entity)
-	if err == nil {
+	if _, ok := err.(*errors.ErrorStatus); !ok {
 		t.Error("expected error, got none")
 	}
 }

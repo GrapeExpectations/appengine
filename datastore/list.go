@@ -1,18 +1,17 @@
 package datastore
 
 import (
+	"appengine/errors"
 	"context"
-	"errors"
 	"google.golang.org/appengine/datastore"
-	"google.golang.org/appengine/log"
+	"net/http"
 	"reflect"
 )
 
 func List(ctx context.Context, q *datastore.Query, entities interface{}) error {
 	keys, err := q.GetAll(ctx, entities)
 	if err != nil {
-		log.Debugf(ctx, "error in List: %v", err)
-		return err
+		return errors.New(http.StatusInternalServerError, err.Error())
 	}
 
 	return setKeys(keys, entities)
@@ -21,14 +20,14 @@ func List(ctx context.Context, q *datastore.Query, entities interface{}) error {
 func setKeys(keys []*datastore.Key, entities interface{}) error {
 	slice := reflect.ValueOf(entities).Elem()
 	if slice.Kind() != reflect.Slice {
-		return errors.New("List requires slice")
+		return errors.New(http.StatusBadRequest, "List requires slice")
 	}
 
 	elemType := slice.Type().Elem()
 	iEntity := reflect.TypeOf((*Entity)(nil)).Elem()
 
 	if !reflect.PtrTo(elemType).Implements(iEntity) {
-		return errors.New("type does not implement Entity interface")
+		return errors.New(http.StatusBadRequest, "type does not implement Entity interface")
 	}
 
 	for i := 0; i < slice.Len(); i++ {

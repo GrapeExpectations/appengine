@@ -1,11 +1,11 @@
 package datastore
 
 import (
+	"appengine/errors"
 	"context"
-	"errors"
 	"github.com/GrapeExpectations/appengine/helper"
 	"google.golang.org/appengine/datastore"
-	"google.golang.org/appengine/log"
+	"net/http"
 	"reflect"
 )
 
@@ -18,8 +18,7 @@ func Put(ctx context.Context, e Entity) error {
 
 	k, err := datastore.Put(ctx, key, e)
 	if err != nil {
-		log.Debugf(ctx, "could not write to datastore: %v", err)
-		return err
+		return errors.New(http.StatusInternalServerError, err.Error())
 	}
 	e.SetKey(k)
 
@@ -29,14 +28,12 @@ func Put(ctx context.Context, e Entity) error {
 func PutMulti(ctx context.Context, entities []Entity) error {
 	keys, err := validateKeys(ctx, entities)
 	if err != nil {
-		log.Debugf(ctx, "could not write to datastore: %v", err)
 		return err
 	}
 
 	ks, err := datastore.PutMulti(ctx, keys, entities)
 	if err != nil {
-		log.Debugf(ctx, "could not write to datastore: %v", err)
-		return err
+		return errors.New(http.StatusInternalServerError, err.Error())
 	}
 
 	for i, e := range entities {
@@ -58,13 +55,13 @@ func validateKey(ctx context.Context, ns string, e Entity) (*datastore.Key, erro
 	}
 
 	if key.Namespace() != ns {
-		return nil, errors.New("key does not belong to namespace")
+		return nil, errors.New(http.StatusBadRequest, "key does not belong to namespace")
 	}
 	if key.Kind() != entityType {
-		return nil, errors.New("key does not match kind")
+		return nil, errors.New(http.StatusBadRequest, "key does not match kind")
 	}
 	if !key.Parent().Equal(parentKey) {
-		return nil, errors.New("parent does not match key")
+		return nil, errors.New(http.StatusBadRequest, "parent does not match key")
 	}
 
 	return key, nil

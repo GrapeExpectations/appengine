@@ -1,10 +1,10 @@
 package service
 
 import (
+  "appengine/errors"
   "context"
   "fmt"
   "google.golang.org/appengine"
-  "google.golang.org/appengine/log"
   "google.golang.org/appengine/urlfetch"
   "net/http"
 )
@@ -19,8 +19,8 @@ func NewServiceClient(ctx context.Context, service string) (*ServiceClient, erro
 
   m, err := appengine.ModuleHostname(ctx, service, "", "")
 	if err != nil {
-    log.Debugf(ctx, "error finding service [%v]: %v", service, err)
-    return nil, err
+    msg := fmt.Sprintf("error finding service [%v]: %v", service, err)
+    return nil, errors.New(http.StatusInternalServerError, msg)
 	}
 
   return &ServiceClient {client, m}, nil
@@ -46,7 +46,7 @@ func (c *ServiceClient) Request(method string, r *Request) (*http.Response, erro
   url := fmt.Sprintf("%s%s%s", protocol(), c.module, r.path)
   req, err := http.NewRequest(method, url, r.body)
 	if err != nil {
-    return nil, err
+    return nil, errors.New(http.StatusInternalServerError, err.Error())
 	}
 
   req.Header = r.Header

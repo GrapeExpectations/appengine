@@ -1,22 +1,27 @@
 package datastore
 
 import (
+	"appengine/errors"
 	"context"
-	"errors"
 	"google.golang.org/appengine/datastore"
+	"net/http"
 	"reflect"
 )
 
 func Get(ctx context.Context, key *datastore.Key, dst interface{}) error {
+	if key == nil {
+		return errors.New(http.StatusBadRequest, "key not provided")
+	}
+
 	iEntity := reflect.TypeOf((*Entity)(nil)).Elem()
 	elemType := reflect.TypeOf(dst).Elem()
 
 	if !reflect.PtrTo(elemType).Implements(iEntity) {
-		return errors.New("type does not implement Entity interface")
+		return errors.New(http.StatusBadRequest, "type does not implement Entity interface")
 	}
 
 	if err := datastore.Get(ctx, key, dst); err != nil {
-		return err
+		return errors.New(http.StatusInternalServerError, err.Error())
 	}
 
 	e := reflect.ValueOf(dst).Interface().(Entity)
