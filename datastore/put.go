@@ -18,7 +18,7 @@ func Put(ctx context.Context, e Entity) error {
 
 	k, err := datastore.Put(ctx, key, e)
 	if err != nil {
-		return errors.New(http.StatusInternalServerError, err.Error())
+		return err
 	}
 	e.SetKey(k)
 
@@ -33,7 +33,7 @@ func PutMulti(ctx context.Context, entities []Entity) error {
 
 	ks, err := datastore.PutMulti(ctx, keys, entities)
 	if err != nil {
-		return errors.New(http.StatusInternalServerError, err.Error())
+		return err
 	}
 
 	for i, e := range entities {

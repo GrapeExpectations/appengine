@@ -21,7 +21,7 @@ func Get(ctx context.Context, key *datastore.Key, dst interface{}) error {
 	}
 
 	if err := datastore.Get(ctx, key, dst); err != nil {
-		return errors.New(http.StatusInternalServerError, err.Error())
+		return err
 	}
 
 	e := reflect.ValueOf(dst).Interface().(Entity)

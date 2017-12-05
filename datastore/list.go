@@ -11,7 +11,7 @@ import (
 func List(ctx context.Context, q *datastore.Query, entities interface{}) error {
 	keys, err := q.GetAll(ctx, entities)
 	if err != nil {
-		return errors.New(http.StatusInternalServerError, err.Error())
+		return err
 	}
 
 	return setKeys(keys, entities)

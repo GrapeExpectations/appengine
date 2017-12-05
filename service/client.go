@@ -46,7 +46,7 @@ func (c *ServiceClient) Request(method string, r *Request) (*http.Response, erro
   url := fmt.Sprintf("%s%s%s", protocol(), c.module, r.path)
   req, err := http.NewRequest(method, url, r.body)
 	if err != nil {
-    return nil, errors.New(http.StatusInternalServerError, err.Error())
+    return nil, err
 	}
 
   req.Header = r.Header
