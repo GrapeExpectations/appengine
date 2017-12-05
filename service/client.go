@@ -1,7 +1,7 @@
 package service
 
 import (
-  "appengine/errors"
+  "github.com/GrapeExpectations/appengine/errors"
   "context"
   "fmt"
   "google.golang.org/appengine"

@@ -1,7 +1,7 @@
 package datastore
 
 import (
-	"appengine/errors"
+	"github.com/GrapeExpectations/appengine/errors"
 	"context"
 	"google.golang.org/appengine/datastore"
 	"net/http"
