@@ -5,6 +5,6 @@ import (
 )
 
 type Keys struct {
-	Key       *datastore.Key `datastore:"-"`
-	ParentKey *datastore.Key `datastore:"-"`
+	Key       *datastore.Key `datastore:"-" json:"keyString"`
+	ParentKey *datastore.Key `datastore:"-" json:"parentKeyString,omitempty"`
 }
