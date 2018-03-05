@@ -1,31 +1,35 @@
 package datastore
 
 import (
-	"github.com/GrapeExpectations/appengine/errors"
 	"context"
-	"google.golang.org/appengine/datastore"
 	"net/http"
 	"reflect"
+
+	"github.com/GrapeExpectations/appengine/errors"
+	"google.golang.org/appengine/datastore"
 )
 
-func Query(ctx context.Context, q *datastore.Query, entities interface{}, entity Entity) (*datastore.Cursor, error) {
+func Query(ctx context.Context, q *datastore.Query, entities interface{}) (*datastore.Cursor, error) {
 	slice := reflect.ValueOf(entities).Elem()
 	if slice.Kind() != reflect.Slice {
 		return nil, errors.New(http.StatusBadRequest, "List requires slice")
 	}
 
+	elemType := slice.Type().Elem()
+
 	t := q.Run(ctx)
 	for {
-		k, err := t.Next(entity)
+		ev := reflect.New(elemType)
+		k, err := t.Next(ev.Interface())
 		if err == datastore.Done {
 			break // No further entities match the query.
 		}
 		if err != nil {
 			return nil, err
 		}
-		entity.SetKey(k)
-		entity.SetParentKey(k.Parent())
-		slice.Set(reflect.Append(slice, reflect.Indirect(reflect.ValueOf(entity))))
+		ev.MethodByName("SetKey").Call([]reflect.Value{reflect.ValueOf(k)})
+		ev.MethodByName("SetParentKey").Call([]reflect.Value{reflect.ValueOf(k.Parent())})
+		slice.Set(reflect.Append(slice, ev.Elem()))
 	}
 
 	cursor, err := t.Cursor()

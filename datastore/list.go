@@ -1,14 +1,20 @@
 package datastore
 
 import (
-	"github.com/GrapeExpectations/appengine/errors"
 	"context"
-	"google.golang.org/appengine/datastore"
 	"net/http"
 	"reflect"
+
+	"github.com/GrapeExpectations/appengine/errors"
+	"google.golang.org/appengine/datastore"
 )
 
 func List(ctx context.Context, q *datastore.Query, entities interface{}) error {
+	slice := reflect.ValueOf(entities).Elem()
+	if slice.Kind() != reflect.Slice {
+		return errors.New(http.StatusBadRequest, "List requires slice")
+	}
+
 	keys, err := q.GetAll(ctx, entities)
 	if err != nil {
 		return err

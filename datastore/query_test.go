@@ -1,12 +1,13 @@
 package datastore
 
 import (
+	"testing"
+	"time"
+
 	"github.com/GrapeExpectations/appengine/errors"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/aetest"
 	"google.golang.org/appengine/datastore"
-	"testing"
-	"time"
 )
 
 func TestQuery_NotSlice(t *testing.T) {
@@ -16,11 +17,10 @@ func TestQuery_NotSlice(t *testing.T) {
 	}
 	defer done()
 
-	var entity TestEntity
 	var entities TestEntity
 	q := datastore.NewQuery(TestEntityType)
 
-	_, err = Query(ctx, q, &entities, &entity)
+	_, err = Query(ctx, q, &entities)
 	if _, ok := err.(*errors.ErrorStatus); !ok {
 		t.Error("expected error, got none")
 	}
@@ -60,11 +60,10 @@ func TestQuery_Success(t *testing.T) {
 	// wait for datastore
 	time.Sleep(100 * time.Millisecond)
 
-	var entity TestEntity
 	entities := make([]TestEntity, 0)
 	q := datastore.NewQuery(TestEntityType)
 
-	cursor, err := Query(ctx, q, &entities, &entity)
+	cursor, err := Query(ctx, q, &entities)
 	if err != nil {
 		t.Errorf("query error: %v", err)
 	}

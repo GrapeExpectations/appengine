@@ -1,12 +1,13 @@
 package datastore
 
 import (
+	"testing"
+	"time"
+
 	"github.com/GrapeExpectations/appengine/errors"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/aetest"
 	"google.golang.org/appengine/datastore"
-	"testing"
-	"time"
 )
 
 func TestList_NotSlice(t *testing.T) {
