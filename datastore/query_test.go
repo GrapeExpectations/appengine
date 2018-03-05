@@ -26,6 +26,22 @@ func TestQuery_NotSlice(t *testing.T) {
 	}
 }
 
+func TestQuery_NotEntity(t *testing.T) {
+	ctx, done, err := aetest.NewContext()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer done()
+
+	entities := make([]struct{ Foo string }, 0)
+	q := datastore.NewQuery(TestEntityType)
+
+	_, err = Query(ctx, q, &entities)
+	if _, ok := err.(*errors.ErrorStatus); !ok {
+		t.Error("expected error, got none")
+	}
+}
+
 func TestQuery_Success(t *testing.T) {
 	const namespace = "local"
 	ctx, done, err := aetest.NewContext()

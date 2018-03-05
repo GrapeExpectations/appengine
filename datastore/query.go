@@ -15,7 +15,11 @@ func Query(ctx context.Context, q *datastore.Query, entities interface{}) (*data
 		return nil, errors.New(http.StatusBadRequest, "List requires slice")
 	}
 
+	entity := reflect.TypeOf((*Entity)(nil)).Elem()
 	elemType := slice.Type().Elem()
+	if !reflect.PtrTo(elemType).Implements(entity) {
+		return nil, errors.New(http.StatusBadRequest, "Entity type required")
+	}
 
 	t := q.Run(ctx)
 	for {
