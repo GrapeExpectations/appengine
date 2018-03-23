@@ -3,11 +3,12 @@ package handler
 import (
 	"context"
 	"fmt"
-	"google.golang.org/appengine/aetest"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"google.golang.org/appengine/aetest"
 )
 
 func TestServiceRequest(t *testing.T) {
@@ -22,8 +23,9 @@ func TestServiceRequest(t *testing.T) {
 	defer inst.Close()
 
 	// setup handler
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		fmt.Fprintf(w, responseBody)
+		return nil
 	}
 
 	goodHandler := NewHandler("/", handler).ServiceRequest()

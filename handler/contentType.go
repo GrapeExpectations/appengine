@@ -7,9 +7,9 @@ import (
 
 func (h *Handler) ContentType(contentType string) *Handler {
 	fn := h.handler
-	h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		w.Header().Set("Content-type", contentType)
-		fn(ctx, w, r)
+		return fn(ctx, w, r)
 	}
 
 	return h

@@ -31,11 +31,11 @@ func init() {
   http.Handle("/", r)
 }
 
-func listHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func listHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
   // ... list the things
 }
 
-func writeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func writeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
   // ... write a thing
 }
 ```

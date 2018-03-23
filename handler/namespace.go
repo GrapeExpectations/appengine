@@ -2,30 +2,29 @@ package handler
 
 import (
 	"context"
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/log"
+	"fmt"
 	"net/http"
+
+	"github.com/GrapeExpectations/appengine/errors"
+
+	"google.golang.org/appengine"
 )
 
 func (h *Handler) NamespacedRequest(ns func(*http.Request) (string, error)) *Handler {
 
 	fn := h.handler
-	h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		namespace, err := ns(r)
 		if err != nil {
-			log.Debugf(ctx, "error getting namespace: %v", err)
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
+			return errors.New(http.StatusBadRequest, fmt.Sprintf("error getting namespace: %v", err))
 		}
 
 		namespacedCtx, err := appengine.Namespace(ctx, namespace)
 		if err != nil {
-			log.Debugf(ctx, "error using namespace: %v", err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
+			return errors.New(http.StatusInternalServerError, fmt.Sprintf("error using namespace: %v", err))
 		}
 
-		fn(namespacedCtx, w, r)
+		return fn(namespacedCtx, w, r)
 	}
 
 	return h

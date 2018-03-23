@@ -3,11 +3,12 @@ package handler
 import (
 	"context"
 	"fmt"
-	"google.golang.org/appengine/aetest"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"google.golang.org/appengine/aetest"
 )
 
 func TestHandler(t *testing.T) {
@@ -20,8 +21,9 @@ func TestHandler(t *testing.T) {
 
 	responseBody := "ok"
 	path := "/"
-	fn := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	fn := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		fmt.Fprintf(w, responseBody)
+		return nil
 	}
 
 	handler := NewHandler(path, fn)

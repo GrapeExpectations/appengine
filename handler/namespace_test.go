@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/GrapeExpectations/appengine/helper"
-	"google.golang.org/appengine/aetest"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/GrapeExpectations/appengine/helper"
+	"google.golang.org/appengine/aetest"
 )
 
 func TestNamespacedRequest(t *testing.T) {
@@ -24,9 +25,10 @@ func TestNamespacedRequest(t *testing.T) {
 	defer inst.Close()
 
 	// setup handler
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		n := helper.NamespaceFromContext(ctx)
 		fmt.Fprintf(w, n)
+		return nil
 	}
 
 	goodHandler := NewHandler("/", handler).
