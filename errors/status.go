@@ -13,8 +13,8 @@ func (e *ErrorStatus) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Msg)
 }
 
-func New(c int, m string) *ErrorStatus {
-	return &ErrorStatus{c, m}
+func New(c int, m string, a ...interface{}) *ErrorStatus {
+	return &ErrorStatus{c, fmt.Sprintf(m, a)}
 }
 
 func With(err error, c int, m string, a ...interface{}) *ErrorStatus {
