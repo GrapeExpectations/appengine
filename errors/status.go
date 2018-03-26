@@ -17,8 +17,8 @@ func New(c int, m string) *ErrorStatus {
 	return &ErrorStatus{c, m}
 }
 
-func With(err error, c int, m string) *ErrorStatus {
-	msg := m
+func With(err error, c int, m string, a ...interface{}) *ErrorStatus {
+	msg := fmt.Sprintf(m, a)
 	if m == "" && err != nil {
 		msg = err.Error()
 	}
