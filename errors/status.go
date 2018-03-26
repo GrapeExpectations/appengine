@@ -17,7 +17,11 @@ func New(c int, m string, a ...interface{}) *ErrorStatus {
 	return &ErrorStatus{c, fmt.Sprintf(m, a)}
 }
 
-func With(err error, c int, m string, a ...interface{}) *ErrorStatus {
+func With(err error, m string, a ...interface{}) *ErrorStatus {
+	return WithStatus(err, 500, m, a)
+}
+
+func WithStatus(err error, c int, m string, a ...interface{}) *ErrorStatus {
 	msg := fmt.Sprintf(m, a)
 	if m == "" && err != nil {
 		msg = err.Error()
