@@ -1,41 +1,46 @@
 package errors
 
 import (
+	"errors"
 	"fmt"
 )
 
-type ErrorStatus struct {
+type StatusError struct {
 	Code int
 	Msg  string
+	err  error
 }
 
-func (e *ErrorStatus) Error() string {
-	return fmt.Sprintf("%d: %s", e.Code, e.Msg)
+func (e *StatusError) Error() string {
+	return fmt.Sprintf("<%d> %s: %v", e.Code, e.Msg, e.err)
 }
 
-func New(c int, m string, a ...interface{}) *ErrorStatus {
-	return &ErrorStatus{c, fmt.Sprintf(m, a)}
-}
-
-func With(err error, m string, a ...interface{}) *ErrorStatus {
-	return WithStatus(err, 500, m, a)
-}
-
-func WithStatus(err error, c int, m string, a ...interface{}) *ErrorStatus {
-	msg := fmt.Sprintf(m, a)
-	if m == "" && err != nil {
-		msg = err.Error()
+func (e *StatusError) SetCode(c int) *StatusError {
+	if e.Code <= 0 {
+		e.Code = c
 	}
 
-	if serr, ok := err.(*ErrorStatus); ok {
-		if serr.Code == 0 {
-			serr.Code = c
-		}
-		if serr.Msg == "" {
-			serr.Msg = msg
-		}
-		return serr
+	return e
+}
+
+func (e *StatusError) SetMsg(m string) *StatusError {
+	if m == "" || e.Msg == "" {
+		e.Msg = m
 	}
 
-	return New(c, msg)
+	return e
+}
+
+func New(c int, m string) *StatusError {
+	return &StatusError{
+		Code: c,
+		Msg:  m,
+		err:  errors.New(m),
+	}
+}
+
+func With(err error) *StatusError {
+	return &StatusError{
+		err: err,
+	}
 }
