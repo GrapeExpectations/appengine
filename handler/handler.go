@@ -25,18 +25,17 @@ func (h *Handler) Route() (string, func(http.ResponseWriter, *http.Request)) {
 	return h.path, func(w http.ResponseWriter, r *http.Request) {
 		ctx := appengine.NewContext(r)
 		if err := h.handler(ctx, w, r); err != nil {
-			if serr, ok := err.(*errors.ErrorStatus); ok {
-				if serr.Msg != "" {
-					log.Debugf(ctx, "%s", serr.Msg)
+			switch err := err.(type) {
+			case *errors.StatusError:
+				if err.Msg != "" {
+					log.Debugf(ctx, "%s", err)
 				}
-				http.Error(w, http.StatusText(serr.Code), serr.Code)
-				return
-			}
-			if err != nil {
+				http.Error(w, http.StatusText(err.Code), err.Code)
+			default:
 				log.Errorf(ctx, "Error: %v", err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-				return
 			}
+			return
 		}
 	}
 }
