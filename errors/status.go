@@ -40,7 +40,12 @@ func New(c int, m string) *StatusError {
 }
 
 func With(err error) *StatusError {
-	return &StatusError{
-		err: err,
+	switch err := err.(type) {
+	case *StatusError:
+		return err
+	default:
+		return &StatusError{
+			err: err,
+		}
 	}
 }
