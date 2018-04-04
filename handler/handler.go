@@ -27,9 +27,14 @@ func (h *Handler) Route() (string, func(http.ResponseWriter, *http.Request)) {
 		if err := h.handler(ctx, w, r); err != nil {
 			switch err := err.(type) {
 			case *errors.StatusError:
+				if err.Code <= 0 {
+					err.SetCode(http.StatusInternalServerError)
+				}
+
 				if err.Msg != "" {
 					log.Debugf(ctx, "%s", err)
 				}
+
 				http.Error(w, http.StatusText(err.Code), err.Code)
 			default:
 				log.Errorf(ctx, "Error: %v", err)
