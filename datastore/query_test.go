@@ -21,7 +21,7 @@ func TestQuery_NotSlice(t *testing.T) {
 	q := datastore.NewQuery(TestEntityType)
 
 	_, err = Query(ctx, q, &entities)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Error("expected error, got none")
 	}
 }
@@ -37,7 +37,7 @@ func TestQuery_NotEntity(t *testing.T) {
 	q := datastore.NewQuery(TestEntityType)
 
 	_, err = Query(ctx, q, &entities)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Error("expected error, got none")
 	}
 }

@@ -9,12 +9,14 @@ import (
 	"google.golang.org/appengine/log"
 )
 
+type HandlerFunc func(context.Context, http.ResponseWriter, *http.Request) error
+
 type Handler struct {
-	handler func(context.Context, http.ResponseWriter, *http.Request) error
+	handler HandlerFunc
 	path    string
 }
 
-func NewHandler(path string, fn func(context.Context, http.ResponseWriter, *http.Request) error) *Handler {
+func NewHandler(path string, fn HandlerFunc) *Handler {
 	return &Handler{
 		handler: fn,
 		path:    path,

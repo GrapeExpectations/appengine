@@ -1,11 +1,12 @@
 package datastore
 
 import (
+	"testing"
+
 	"github.com/GrapeExpectations/appengine/errors"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/aetest"
 	"google.golang.org/appengine/datastore"
-	"testing"
 )
 
 func TestPut_Error(t *testing.T) {
@@ -22,7 +23,7 @@ func TestPut_Error(t *testing.T) {
 	e.SetKey(key)
 
 	err = Put(ctx, &e)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Errorf("expected error, got none")
 	}
 }
@@ -75,7 +76,7 @@ func TestPutMulti_Error(t *testing.T) {
 	es[1] = &e
 
 	err = PutMulti(ctx, es)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Errorf("expected error, got none")
 	}
 }
@@ -122,7 +123,7 @@ func TestValidateKey_BadNamespace(t *testing.T) {
 	e.SetKey(key)
 
 	_, err = validateKey(ctx, "", &e)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Errorf("expected error, got none")
 	}
 }
@@ -141,7 +142,7 @@ func TestValidateKey_WrongKind(t *testing.T) {
 	e.SetKey(key)
 
 	_, err = validateKey(ctx, "", &e)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Errorf("expected error, got none")
 	}
 }
@@ -163,7 +164,7 @@ func TestValidateKey_WrongParent(t *testing.T) {
 	e.SetParentKey(parentKey)
 
 	_, err = validateKey(ctx, "", &e)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Errorf("expected error, got none")
 	}
 }
@@ -224,7 +225,7 @@ func TestValidateKeys_Error(t *testing.T) {
 	es[1] = &e
 
 	_, err = validateKeys(ctx, es)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Errorf("expected error, got none")
 	}
 }

@@ -1,11 +1,12 @@
 package datastore
 
 import (
+	"testing"
+
 	"github.com/GrapeExpectations/appengine/errors"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/aetest"
 	"google.golang.org/appengine/datastore"
-	"testing"
 )
 
 func TestGet_BadType(t *testing.T) {
@@ -21,7 +22,7 @@ func TestGet_BadType(t *testing.T) {
 
 	var entity BadType
 	err = Get(ctx, nil, &entity)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Errorf("expected error, got none")
 	}
 }
@@ -35,7 +36,7 @@ func TestGet_NilKey(t *testing.T) {
 
 	var entity TestEntity
 	err = Get(ctx, nil, &entity)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Errorf("expected error, got none")
 	}
 }

@@ -21,7 +21,7 @@ func TestList_NotSlice(t *testing.T) {
 	q := datastore.NewQuery(TestEntityType)
 
 	err = List(ctx, q, &entities)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Error("expected error, got none")
 	}
 }
@@ -71,7 +71,7 @@ func TestList_Success(t *testing.T) {
 func TestSetKeys_NotSlice(t *testing.T) {
 	var entities TestEntity
 	err := setKeys(nil, &entities)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Error("expected error, got none")
 	}
 }
@@ -79,7 +79,7 @@ func TestSetKeys_NotSlice(t *testing.T) {
 func TestSetKeys_NotInterface(t *testing.T) {
 	entities := make([]string, 0)
 	err := setKeys(nil, &entities)
-	if _, ok := err.(*errors.ErrorStatus); !ok {
+	if _, ok := err.(*errors.StatusError); !ok {
 		t.Error("expected error, got none")
 	}
 }

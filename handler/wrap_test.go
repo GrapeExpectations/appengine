@@ -28,7 +28,7 @@ func TestWrap(t *testing.T) {
 		return nil
 	}
 
-	wrapper := func(ctx context.Context, w http.ResponseWriter, r *http.Request, fn func(context.Context, http.ResponseWriter, *http.Request) error) error {
+	wrapper := func(ctx context.Context, w http.ResponseWriter, r *http.Request, fn HandlerFunc) error {
 		w.Header().Set("Content-type", contentType)
 		return fn(ctx, w, r)
 	}
