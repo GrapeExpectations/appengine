@@ -1,8 +1,12 @@
 package errors
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"net/http"
+
+	"google.golang.org/appengine/log"
 )
 
 type StatusError struct {
@@ -15,19 +19,41 @@ func (e *StatusError) Error() string {
 	return fmt.Sprintf("<%d> %s: %v", e.Code, e.Msg, e.err)
 }
 
-func (e *StatusError) SetCode(c int) *StatusError {
-	if e.Code <= 0 {
-		e.Code = c
+func (e *StatusError) GetCode() int {
+	if e.Code > 0 {
+		return e.Code
 	}
 
+	if e.err != nil {
+		switch err := e.err.(type) {
+		case *StatusError:
+			return err.GetCode()
+		}
+	}
+
+	return http.StatusInternalServerError
+}
+
+func (e *StatusError) Log(ctx context.Context) {
+	log.Errorf(ctx, "{code: %d, message: \"%v\"}", e.Code, e.Msg)
+
+	if e.err != nil {
+		switch err := e.err.(type) {
+		case *StatusError:
+			err.Log(ctx)
+		default:
+			log.Errorf(ctx, "{cause: \"%v\"}", err)
+		}
+	}
+}
+
+func (e *StatusError) SetCode(c int) *StatusError {
+	e.Code = c
 	return e
 }
 
 func (e *StatusError) SetMsg(m string) *StatusError {
-	if m == "" || e.Msg == "" {
-		e.Msg = m
-	}
-
+	e.Msg = m
 	return e
 }
 
@@ -47,5 +73,13 @@ func With(err error) *StatusError {
 		return &StatusError{
 			err: err,
 		}
+	}
+}
+
+func Wrap(m string, err error) *StatusError {
+	return &StatusError{
+		Code: 0,
+		Msg:  m,
+		err:  err,
 	}
 }
