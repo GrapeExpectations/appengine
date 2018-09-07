@@ -44,13 +44,13 @@ func (e *StatusError) GetCode() int {
 	return http.StatusInternalServerError
 }
 
-func (e *StatusError) Log(ctx context.Context) {
-	log.Errorf(ctx, e.json())
+func (e *StatusError) Log(ctx context.Context, logFn func(string)) {
+	logFn(e.json())
 
 	if e.err != nil {
 		switch err := e.err.(type) {
 		case *StatusError:
-			err.Log(ctx)
+			err.Log(ctx, logFn)
 		default:
 			log.Errorf(ctx, "{cause: \"%v\"}", err)
 		}

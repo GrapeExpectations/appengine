@@ -29,8 +29,18 @@ func (h *Handler) Route() (string, func(http.ResponseWriter, *http.Request)) {
 		if err := h.handler(ctx, w, r); err != nil {
 			switch err := err.(type) {
 			case *errors.StatusError:
-				err.Log(ctx)
 				code := err.GetCode()
+
+				if code >= 400 && code < 500 {
+					err.Log(ctx, func(s string) {
+						log.Debugf(ctx, "%s", s)
+					})
+				} else {
+					err.Log(ctx, func(s string) {
+						log.Errorf(ctx, "%s", s)
+					})
+				}
+
 				http.Error(w, http.StatusText(code), code)
 			default:
 				log.Errorf(ctx, "Error: %v", err)
