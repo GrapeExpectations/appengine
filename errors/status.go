@@ -76,7 +76,7 @@ func With(err error) *StatusError {
 	}
 }
 
-func Wrap(m string, err error) *StatusError {
+func Wrap(err error, m string) *StatusError {
 	return &StatusError{
 		Code: 0,
 		Msg:  m,
