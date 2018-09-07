@@ -2,6 +2,7 @@ package errors
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -10,13 +11,22 @@ import (
 )
 
 type StatusError struct {
-	Code int
-	Msg  string
-	err  error
+	Code   int     `json:"code"`
+	Detail Message `json:"detail"`
+	err    error
 }
 
 func (e *StatusError) Error() string {
-	return fmt.Sprintf("<%d> %s: %v", e.Code, e.Msg, e.err)
+	return e.json()
+}
+
+func (e *StatusError) json() string {
+	b, err := json.Marshal(e)
+	if err != nil {
+		return string(b)
+	}
+
+	return fmt.Sprintf("{code: %d, detail: {package: \"%s\", function:\"%s\", message: \"%s\"}}", e.Code, e.Detail.Pkg, e.Detail.Fn, e.Detail.Msg)
 }
 
 func (e *StatusError) GetCode() int {
@@ -35,7 +45,7 @@ func (e *StatusError) GetCode() int {
 }
 
 func (e *StatusError) Log(ctx context.Context) {
-	log.Errorf(ctx, "{code: %d, message: \"%v\"}", e.Code, e.Msg)
+	log.Errorf(ctx, e.json())
 
 	if e.err != nil {
 		switch err := e.err.(type) {
@@ -52,16 +62,11 @@ func (e *StatusError) SetCode(c int) *StatusError {
 	return e
 }
 
-func (e *StatusError) SetMsg(m string) *StatusError {
-	e.Msg = m
-	return e
-}
-
-func New(c int, m string) *StatusError {
+func New(c int, m Message) *StatusError {
 	return &StatusError{
-		Code: c,
-		Msg:  m,
-		err:  errors.New(m),
+		Code:   c,
+		Detail: m,
+		err:    errors.New(m.Msg),
 	}
 }
 
@@ -76,10 +81,10 @@ func With(err error) *StatusError {
 	}
 }
 
-func Wrap(err error, m string) *StatusError {
+func Wrap(err error, m Message) *StatusError {
 	return &StatusError{
-		Code: 0,
-		Msg:  m,
-		err:  err,
+		Code:   0,
+		Detail: m,
+		err:    err,
 	}
 }
