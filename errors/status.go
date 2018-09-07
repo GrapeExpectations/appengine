@@ -70,17 +70,6 @@ func New(c int, m Message) *StatusError {
 	}
 }
 
-func With(err error) *StatusError {
-	switch err := err.(type) {
-	case *StatusError:
-		return err
-	default:
-		return &StatusError{
-			err: err,
-		}
-	}
-}
-
 func Wrap(err error, m Message) *StatusError {
 	return &StatusError{
 		Code:   0,
