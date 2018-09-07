@@ -13,11 +13,12 @@ func (h *Handler) ServiceRequest() *Handler {
 	h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		dev := appengine.IsDevAppServer()
 
-		requestingAppId := r.Header.Get("X-Appengine-Inbound-Appid")
-		appId := appengine.AppID(ctx)
+		requestingAppID := r.Header.Get("X-Appengine-Inbound-Appid")
+		appID := appengine.AppID(ctx)
 
-		if !dev && requestingAppId != appId {
-			return errors.New(http.StatusForbidden, "invalid service request")
+		if !dev && requestingAppID != appID {
+			return errors.New(http.StatusForbidden,
+				errors.Message{Pkg: "handler", Fn: "ServiceRequest", Msg: "invalid service request"})
 		}
 
 		return fn(ctx, w, r)

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/GrapeExpectations/appengine/errors"
@@ -16,12 +15,16 @@ func (h *Handler) NamespacedRequest(ns func(*http.Request) (string, error)) *Han
 	h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		namespace, err := ns(r)
 		if err != nil {
-			return errors.New(http.StatusBadRequest, fmt.Sprintf("error getting namespace: %v", err))
+			return errors.Wrap(err,
+				errors.Message{Pkg: "handler", Fn: "NamespacedRequest", Msg: "error getting namespace"}).
+				SetCode(http.StatusBadRequest)
 		}
 
 		namespacedCtx, err := appengine.Namespace(ctx, namespace)
 		if err != nil {
-			return errors.New(http.StatusInternalServerError, fmt.Sprintf("error using namespace: %v", err))
+			return errors.Wrap(err,
+				errors.Message{Pkg: "handler", Fn: "NamespacedRequest", Msg: "error using namespace"}).
+				SetCode(http.StatusInternalServerError)
 		}
 
 		return fn(namespacedCtx, w, r)
