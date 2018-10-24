@@ -6,13 +6,14 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"runtime"
 
 	"google.golang.org/appengine/log"
 )
 
 type StatusError struct {
 	Code   int     `json:"code"`
-	Detail Message `json:"detail"`
+	Detail message `json:"detail"`
 	err    error
 }
 
@@ -26,7 +27,7 @@ func (e *StatusError) json() string {
 		return string(b)
 	}
 
-	return fmt.Sprintf("{code: %d, detail: {package: \"%s\", function:\"%s\", message: \"%s\"}}", e.Code, e.Detail.Pkg, e.Detail.Fn, e.Detail.Msg)
+	return fmt.Sprintf("{code: %d, detail: {function:\"%s\", file:\"%s\", line:%d, message: \"%s\"}}", e.Code, e.Detail.Fn, e.Detail.File, e.Detail.Line, e.Detail.Msg)
 }
 
 func (e *StatusError) GetCode() int {
@@ -62,18 +63,50 @@ func (e *StatusError) SetCode(c int) *StatusError {
 	return e
 }
 
-func New(c int, m Message) *StatusError {
+func New(c int, m string) *StatusError {
+	detail := message{
+		Fn:   "<unknown>",
+		File: "<unknown>",
+		Line: 0,
+		Msg:  m,
+	}
+
+	if pc, file, line, ok := runtime.Caller(2); ok {
+		detail.File = file
+		detail.Line = line
+
+		if fn := runtime.FuncForPC(pc); fn != nil {
+			detail.Fn = fn.Name()
+		}
+	}
+
 	return &StatusError{
 		Code:   c,
-		Detail: m,
-		err:    errors.New(m.Msg),
+		Detail: detail,
+		err:    errors.New(m),
 	}
 }
 
-func Wrap(err error, m Message) *StatusError {
+func Wrap(err error, m string) *StatusError {
+	detail := message{
+		Fn:   "<unknown>",
+		File: "<unknown>",
+		Line: 0,
+		Msg:  m,
+	}
+
+	if pc, file, line, ok := runtime.Caller(2); ok {
+		detail.File = file
+		detail.Line = line
+
+		if fn := runtime.FuncForPC(pc); fn != nil {
+			detail.Fn = fn.Name()
+		}
+	}
+
 	return &StatusError{
 		Code:   0,
-		Detail: m,
+		Detail: detail,
 		err:    err,
 	}
 }

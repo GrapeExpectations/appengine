@@ -56,13 +56,13 @@ func validateKey(ctx context.Context, ns string, e Entity) (*datastore.Key, erro
 	}
 
 	if key.Namespace() != ns {
-		return nil, errors.New(http.StatusBadRequest, errors.Message{Pkg: "datastore", Fn: "validateKey", Msg: "key does not belong to namespace"})
+		return nil, errors.New(http.StatusBadRequest, "key does not belong to namespace")
 	}
 	if key.Kind() != entityType {
-		return nil, errors.New(http.StatusBadRequest, errors.Message{Pkg: "datastore", Fn: "validateKey", Msg: "key does not match kind"})
+		return nil, errors.New(http.StatusBadRequest, "key does not match kind")
 	}
 	if !key.Parent().Equal(parentKey) {
-		return nil, errors.New(http.StatusBadRequest, errors.Message{Pkg: "datastore", Fn: "validateKey", Msg: "parent does not match key"})
+		return nil, errors.New(http.StatusBadRequest, "parent does not match key")
 	}
 
 	return key, nil

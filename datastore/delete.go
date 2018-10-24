@@ -10,10 +10,10 @@ import (
 
 func Delete(ctx context.Context, key *datastore.Key, kind string) error {
 	if key == nil {
-		return errors.New(http.StatusBadRequest, errors.Message{Pkg: "datastore", Fn: "Delete", Msg: "error deleting, no key specified"})
+		return errors.New(http.StatusBadRequest, "error deleting, no key specified")
 	}
 	if key.Kind() != kind {
-		return errors.New(http.StatusBadRequest, errors.Message{Pkg: "datastore", Fn: "Delete", Msg: "key is not the specified type"})
+		return errors.New(http.StatusBadRequest, "key is not the specified type")
 	}
 
 	return datastore.Delete(ctx, key)

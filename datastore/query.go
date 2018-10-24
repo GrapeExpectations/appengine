@@ -12,13 +12,13 @@ import (
 func Query(ctx context.Context, q *datastore.Query, entities interface{}) (*datastore.Cursor, error) {
 	slice := reflect.ValueOf(entities).Elem()
 	if slice.Kind() != reflect.Slice {
-		return nil, errors.New(http.StatusBadRequest, errors.Message{Pkg: "datastore", Fn: "Query", Msg: "List requires slice"})
+		return nil, errors.New(http.StatusBadRequest, "List requires slice")
 	}
 
 	entity := reflect.TypeOf((*Entity)(nil)).Elem()
 	elemType := slice.Type().Elem()
 	if !reflect.PtrTo(elemType).Implements(entity) {
-		return nil, errors.New(http.StatusBadRequest, errors.Message{Pkg: "datastore", Fn: "Query", Msg: "Entity type required"})
+		return nil, errors.New(http.StatusBadRequest, "Entity type required")
 	}
 
 	t := q.Run(ctx)

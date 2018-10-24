@@ -15,15 +15,13 @@ func (h *Handler) NamespacedRequest(ns func(*http.Request) (string, error)) *Han
 	h.handler = func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		namespace, err := ns(r)
 		if err != nil {
-			return errors.Wrap(err,
-				errors.Message{Pkg: "handler", Fn: "NamespacedRequest", Msg: "error getting namespace"}).
+			return errors.Wrap(err, "error getting namespace").
 				SetCode(http.StatusBadRequest)
 		}
 
 		namespacedCtx, err := appengine.Namespace(ctx, namespace)
 		if err != nil {
-			return errors.Wrap(err,
-				errors.Message{Pkg: "handler", Fn: "NamespacedRequest", Msg: "error using namespace"}).
+			return errors.Wrap(err, "error using namespace").
 				SetCode(http.StatusInternalServerError)
 		}
 

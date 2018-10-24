@@ -17,8 +17,7 @@ func (h *Handler) ServiceRequest() *Handler {
 		appID := appengine.AppID(ctx)
 
 		if !dev && requestingAppID != appID {
-			return errors.New(http.StatusForbidden,
-				errors.Message{Pkg: "handler", Fn: "ServiceRequest", Msg: "invalid service request"})
+			return errors.New(http.StatusForbidden, "invalid service request")
 		}
 
 		return fn(ctx, w, r)

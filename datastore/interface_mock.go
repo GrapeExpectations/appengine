@@ -21,51 +21,27 @@ func MockStore() *mockStore {
 	s := mockStore{}
 
 	s.MockDelete(func(ctx context.Context, key *datastore.Key, kind string) error {
-		return errors.New(http.StatusNotImplemented, errors.Message{
-			Pkg: "datastore",
-			Fn:  "MockDelete",
-			Msg: "test error",
-		})
+		return errors.New(http.StatusNotImplemented, "test error")
 	})
 
 	s.MockGet(func(ctx context.Context, key *datastore.Key, dst interface{}) error {
-		return errors.New(http.StatusNotImplemented, errors.Message{
-			Pkg: "datastore",
-			Fn:  "MockGet",
-			Msg: "test error",
-		})
+		return errors.New(http.StatusNotImplemented, "test error")
 	})
 
 	s.MockList(func(ctx context.Context, q *datastore.Query, entities interface{}) error {
-		return errors.New(http.StatusNotImplemented, errors.Message{
-			Pkg: "datastore",
-			Fn:  "MockList",
-			Msg: "test error",
-		})
+		return errors.New(http.StatusNotImplemented, "test error")
 	})
 
 	s.MockPut(func(ctx context.Context, e Entity) error {
-		return errors.New(http.StatusNotImplemented, errors.Message{
-			Pkg: "datastore",
-			Fn:  "MockPut",
-			Msg: "test error",
-		})
+		return errors.New(http.StatusNotImplemented, "test error")
 	})
 
 	s.MockPutMulti(func(ctx context.Context, entities []Entity) error {
-		return errors.New(http.StatusNotImplemented, errors.Message{
-			Pkg: "datastore",
-			Fn:  "MockPutMulti",
-			Msg: "test error",
-		})
+		return errors.New(http.StatusNotImplemented, "test error")
 	})
 
 	s.MockQuery(func(ctx context.Context, q *datastore.Query, entities interface{}) (*datastore.Cursor, error) {
-		return nil, errors.New(http.StatusNotImplemented, errors.Message{
-			Pkg: "datastore",
-			Fn:  "MockQuery",
-			Msg: "test error",
-		})
+		return nil, errors.New(http.StatusNotImplemented, "test error")
 	})
 
 	return &s

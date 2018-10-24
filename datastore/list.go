@@ -12,7 +12,7 @@ import (
 func List(ctx context.Context, q *datastore.Query, entities interface{}) error {
 	slice := reflect.ValueOf(entities).Elem()
 	if slice.Kind() != reflect.Slice {
-		return errors.New(http.StatusBadRequest, errors.Message{Pkg: "datastore", Fn: "List", Msg: "List requires slice"})
+		return errors.New(http.StatusBadRequest, "List requires slice")
 	}
 
 	keys, err := q.GetAll(ctx, entities)
@@ -26,14 +26,14 @@ func List(ctx context.Context, q *datastore.Query, entities interface{}) error {
 func setKeys(keys []*datastore.Key, entities interface{}) error {
 	slice := reflect.ValueOf(entities).Elem()
 	if slice.Kind() != reflect.Slice {
-		return errors.New(http.StatusBadRequest, errors.Message{Pkg: "datastore", Fn: "setKeys", Msg: "List requires slice"})
+		return errors.New(http.StatusBadRequest, "List requires slice")
 	}
 
 	elemType := slice.Type().Elem()
 	iEntity := reflect.TypeOf((*Entity)(nil)).Elem()
 
 	if !reflect.PtrTo(elemType).Implements(iEntity) {
-		return errors.New(http.StatusBadRequest, errors.Message{Pkg: "datastore", Fn: "setKeys", Msg: "type does not implement Entity interface"})
+		return errors.New(http.StatusBadRequest, "type does not implement Entity interface")
 	}
 
 	for i := 0; i < slice.Len(); i++ {
