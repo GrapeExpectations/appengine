@@ -3,7 +3,6 @@ package errors
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"runtime"
@@ -83,7 +82,6 @@ func New(c int, m string) *StatusError {
 	return &StatusError{
 		Code:   c,
 		Detail: detail,
-		err:    errors.New(m),
 	}
 }
 
