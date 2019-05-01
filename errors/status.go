@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"runtime"
-
-	"google.golang.org/appengine/log"
 )
 
 type StatusError struct {
@@ -52,7 +50,7 @@ func (e *StatusError) Log(ctx context.Context, logFn func(string)) {
 		case *StatusError:
 			err.Log(ctx, logFn)
 		default:
-			log.Errorf(ctx, "{cause: \"%v\"}", err)
+			logFn(fmt.Sprintf("{cause: \"%v\"}", err))
 		}
 	}
 }
