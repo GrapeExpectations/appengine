@@ -31,8 +31,8 @@ func TestServiceRequest(t *testing.T) {
 	goodHandler := NewHandler("/", handler).ServiceRequest()
 	errorHandler := NewHandler("/", handler).ServiceRequest()
 
-	_, handleGood := goodHandler.Route()
-	_, handleError := errorHandler.Route()
+	_, handleGood := goodHandler.Route(nil)
+	_, handleError := errorHandler.Route(nil)
 
 	// TEST 1: no namespace
 	req1, err := inst.NewRequest("GET", "/", nil)

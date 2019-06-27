@@ -35,7 +35,7 @@ func TestWrap(t *testing.T) {
 
 	wrappedHandler := NewHandler("/", handler).Wrap(wrapper)
 
-	_, handleWrap := wrappedHandler.Route()
+	_, handleWrap := wrappedHandler.Route(nil)
 
 	// TEST 1: no namespace
 	req, err := inst.NewRequest("GET", "/", nil)

@@ -46,9 +46,9 @@ func TestNamespacedRequest(t *testing.T) {
 			return invalidNamespace, nil
 		})
 
-	_, handleGood := goodHandler.Route()
-	_, handleError := errorHandler.Route()
-	_, handleInvalid := invalidHandler.Route()
+	_, handleGood := goodHandler.Route(nil)
+	_, handleError := errorHandler.Route(nil)
+	_, handleInvalid := invalidHandler.Route(nil)
 
 	// TEST 1: no namespace
 	req1, err := inst.NewRequest("GET", "/", nil)

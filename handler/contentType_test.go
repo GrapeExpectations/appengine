@@ -30,7 +30,7 @@ func TestContentType(t *testing.T) {
 
 	goodHandler := NewHandler("/", handler).ContentType(contentType)
 
-	_, handleGood := goodHandler.Route()
+	_, handleGood := goodHandler.Route(nil)
 
 	req, err := inst.NewRequest("GET", "/", nil)
 	if err != nil {

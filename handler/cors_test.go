@@ -29,7 +29,7 @@ func TestCORS(t *testing.T) {
 
 	goodHandler := NewHandler("/", handler).CORS()
 
-	_, handleGood := goodHandler.Route()
+	_, handleGood := goodHandler.Route(nil)
 
 	req, err := inst.NewRequest("GET", "/", nil)
 	if err != nil {
@@ -96,7 +96,7 @@ func TestCORS_OPTIONS(t *testing.T) {
 
 	optionsHandler := NewHandler("/", handler).CORS()
 
-	_, handleOptions := optionsHandler.Route()
+	_, handleOptions := optionsHandler.Route(nil)
 
 	req, err := inst.NewRequest("OPTIONS", "/", nil)
 	if err != nil {

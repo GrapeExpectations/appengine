@@ -28,7 +28,7 @@ func TestHandler(t *testing.T) {
 
 	handler := NewHandler(path, fn)
 
-	p, f := handler.Route()
+	p, f := handler.Route(nil)
 	if p != path {
 		t.Errorf("incorrect path, got: %v, want: %v", p, path)
 	}
